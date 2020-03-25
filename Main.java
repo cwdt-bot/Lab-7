@@ -21,18 +21,12 @@ class Main {
        return end;
    }
 
-   public static int[] euclid(int first, int second) {
-       int currMax = Math.max(first, second);
-       int currMin = Math.min(first, second);
-       return new int[]{currMin, currMax%currMin};
-
-   }
 
    public static int gcd(int first, int second) {
-       int[] initial = euclid(first, second);
-       return Stream.iterate(initial, d -> d[1] != 0, d-> euclid(d[0],d[1])).
-        map(d-> euclid(d[0],d[1])).
-            reduce(new int[]{1}, (m,n) -> n)[0];
+       Helper initial = new Helper(first, second);
+       return Stream.iterate(initial, d -> d.smaller() != 0, d-> d.euclid()).
+        map(d-> d.euclid()).
+            reduce(initial, (m,n) -> n).larger();
     }
 
     public static long countRepeats(int...array) {
@@ -43,11 +37,14 @@ class Main {
         return count;
     }
 
-    public static double normalizedMean(Stream<Integer> in) {
-        wasteTime why = new wasteTime();
-        in.map(d-> d+0.0).forEach(d->why.update(d));
-        return why.soMean();
-    }
+    /**public static double normalizedMean(Stream<Integer> in) {
+        wasteTime ded = new wasteTime();
+        try {
+            return in.map(d-> d+0.0).map(d -> new wasteTime(d)).reduce(ded, (x,y)-> x.update(y)).soMean();
+        } catch (IndexOutOfBoundsException e) {
+            return 0;
+        }   
+    }**/
 
 }
 
